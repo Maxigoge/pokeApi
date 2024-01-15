@@ -1,6 +1,11 @@
+# Utiliza la imagen base de OpenJDK para Java 17 en Alpine Linux
+FROM openjdk:17-jdk-alpine
 
-FROM eclipse-temurin:17-jdk-jammy
-# copio el jar al directorio /app
-COPY ./service/build/libs/service.jar /app/app.jar
-# inicio el servidor
-CMD ["java", "-server", "-Xmx512M", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=8000", "-Xss384K", "-jar", "/app/app.jar"]
+# Establece el directorio de trabajo en /app
+WORKDIR /app
+
+# Copia el contenido local al directorio /app en el contenedor
+COPY . /app
+
+# Define el comando por defecto para ejecutar tu aplicación
+CMD ["java", "-jar", "tu_aplicacion.jar"]
