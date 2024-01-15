@@ -12,4 +12,7 @@ EXPOSE 8080
 
 COPY --from=build /build/libs/pokemonRestApi-1.jar app.jar
 
+# Otorga permisos de ejecución al script gradlew
+RUN chmod +x ./gradlew
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
