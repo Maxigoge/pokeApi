@@ -1,11 +1,15 @@
-# Utiliza la imagen base de OpenJDK para Java 17 en Alpine Linux
-FROM openjdk:17-jdk-alpine
+FROM ubuntu:latest AS build
 
-# Establece el directorio de trabajo en /app
-WORKDIR /app
+RUN apt-get update
+RUN apt-get install openjdk-17-jdk -y
+COPY . .
 
-# Copia el contenido local al directorio /app en el contenedor
-COPY . /app
+RUN ./gradlew bootJar --no-daemon
 
-# Define el comando por defecto para ejecutar tu aplicación
-CMD ["java", "-jar", "pokemonRestApi-1.0-SNAPSHOT.jar"]
+FROM openjdk:17-jdk-slim
+
+EXPOSE 8080
+
+COPY --from=build /build/libs/demo-1.jar app.jar
+
+ENTRYPOINT ["java", "-jar", "app.jar"]
