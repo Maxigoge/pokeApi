@@ -8,4 +8,4 @@ WORKDIR /app
 COPY . /app
 
 # Define el comando por defecto para ejecutar tu aplicación
-CMD ["java", "-jar", "tu_aplicacion.jar"]
+CMD ["java", "-jar", "pokemonRestApi-1.0-SNAPSHOT.jar"]
