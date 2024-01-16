@@ -1,22 +1,46 @@
 package org.example.configuration;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
-@EnableSwagger2
 public class SwaggerConfig {
+    private static final String API_TITLE = "Pokemon REST API";
+    private static final String API_DESCRIPTION =
+            "Conjunto de End Points para consultas de Pokemones mediante pokeapi.";
 
     @Bean
-    Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.withClassAnnotation(
-                        RestController.class)).paths(PathSelectors.any())
-                .build();
+    public OpenAPI api() {
+        return new OpenAPI()
+                .servers(listServers())
+                .info(apiInfo());
     }
+
+    private List<Server> listServers() {
+        ArrayList<Server> listServers = new ArrayList<>();
+        Server server = new Server();
+        server.setUrl("https://pokemonrestapi.onrender.com/");
+        listServers.add(server);
+        return listServers;
+    }
+
+    private Info apiInfo() {
+        return new Info()
+                .title(API_TITLE)
+                .description(API_DESCRIPTION)
+                .version("1.0.0")
+                .termsOfService("Terms of service")
+                .contact(new Contact()
+                        .name("Maximiliano Nahuel Gomez Geneiro")
+                        .email("kraizyn@gmail.com")
+                        .url("https://pokemonrestapi.onrender.com/"));
+    }
+
 }

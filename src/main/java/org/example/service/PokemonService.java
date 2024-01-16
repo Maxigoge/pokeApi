@@ -29,6 +29,7 @@ public class PokemonService {
         RespuestaListaPokemonDto respuestaListaPokemonDto =
                 restTemplate.getForObject(basePath + "/pokemon", RespuestaListaPokemonDto.class);
 
+        assert respuestaListaPokemonDto != null;
         List<PokemonBaseDto> lista = respuestaListaPokemonDto.getResults();
         List<PokemonInformacionBasicaDto> listaPokemons = new ArrayList<>();
         for (PokemonBaseDto pokemonBase : lista) {
@@ -37,13 +38,8 @@ public class PokemonService {
                     restTemplate.getForObject(basePath + "/pokemon/" + nombrePokemon, RespuestaPokemonDto.class);
 
             List<String> tipos = new ArrayList<>();
-            for (Type tipoO : respuesta.getTypes()){
-                tipos.add(tipoO.getType().getName());
-            }
-            List<String> habilidades = new ArrayList<>();
-            for (Ability ability : respuesta.getAbilities()){
-                habilidades.add(ability.getAbility().getName());
-            }
+            assert respuesta != null;
+            List<String> habilidades = getTypes(respuesta, tipos);
 
             PokemonInformacionBasicaDto pokemonInformacionBasicaDto = PokemonInformacionBasicaDto.builder()
                     .foto(respuesta.getSprites().getFront_default())
@@ -58,19 +54,14 @@ public class PokemonService {
         return listaPokemons;
     }
 
-    public PokemonDetalladoDto getPokemonById(final Long id) {
+    public PokemonDetalladoDto getPokemonById(final Long idPokemon) {
         RespuestaPokemonDto respuesta =
-                restTemplate.getForObject(basePath + "/pokemon/" + id, RespuestaPokemonDto.class);
+                restTemplate.getForObject(basePath + "/pokemon/" + idPokemon, RespuestaPokemonDto.class);
 
         List<String> tipos = new ArrayList<>();
-        for (Type tipoO : respuesta.getTypes()){
-            tipos.add(tipoO.getType().getName());
-        }
-        List<String> habilidades = new ArrayList<>();
-        for (Ability ability : respuesta.getAbilities()){
-            habilidades.add(ability.getAbility().getName());
-        }
+        assert respuesta != null;
 
+        List<String> habilidades = getTypes(respuesta, tipos);
         List<String> movimientos = new ArrayList<>();
         for (Moves moves : respuesta.getMoves()){
             movimientos.add(moves.getMove().getName());
@@ -83,11 +74,20 @@ public class PokemonService {
                 .listadoDeHabilidades(habilidades)
                 .build();
 
-        PokemonDetalladoDto pokemonDetalladoDto = PokemonDetalladoDto.builder()
+        return PokemonDetalladoDto.builder()
                 .informacionBasica(pokemonInformacionBasicaDto)
                 .listadoDeMovimientos(movimientos)
                 .build();
+    }
 
-        return pokemonDetalladoDto;
+    private List<String> getTypes(final RespuestaPokemonDto respuesta, final List<String> tipos) {
+        for (Type tipoO : respuesta.getTypes()){
+            tipos.add(tipoO.getType().getName());
+        }
+        List<String> habilidades = new ArrayList<>();
+        for (Ability ability : respuesta.getAbilities()){
+            habilidades.add(ability.getAbility().getName());
+        }
+        return habilidades;
     }
 }
