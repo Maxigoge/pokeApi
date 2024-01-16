@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.PokemonDetalladoDto;
 import org.example.dto.PokemonInformacionBasicaDto;
 import org.example.dto.respuestasApi.Ability;
+import org.example.dto.respuestasApi.FlavorEntries;
 import org.example.dto.respuestasApi.Moves;
 import org.example.dto.respuestasApi.PokemonBaseDto;
+import org.example.dto.respuestasApi.RespuestaDescripcion;
 import org.example.dto.respuestasApi.RespuestaListaPokemonDto;
 import org.example.dto.respuestasApi.RespuestaPokemonDto;
 import org.example.dto.respuestasApi.Type;
@@ -32,6 +34,7 @@ public class PokemonService {
         assert respuestaListaPokemonDto != null;
         List<PokemonBaseDto> lista = respuestaListaPokemonDto.getResults();
         List<PokemonInformacionBasicaDto> listaPokemons = new ArrayList<>();
+
         for (PokemonBaseDto pokemonBase : lista) {
             String nombrePokemon = pokemonBase.getName();
             RespuestaPokemonDto respuesta =
@@ -55,8 +58,24 @@ public class PokemonService {
     }
 
     public PokemonDetalladoDto getPokemonById(final Long idPokemon) {
+
         RespuestaPokemonDto respuesta =
                 restTemplate.getForObject(basePath + "/pokemon/" + idPokemon, RespuestaPokemonDto.class);
+
+        RespuestaDescripcion descripcion =
+                restTemplate.getForObject(basePath + "/pokemon-species/" + idPokemon, RespuestaDescripcion.class);
+
+        String descripcionDetallada = null;
+
+        assert descripcion != null;
+        for (FlavorEntries desc: descripcion.getFlavor_text_entries()){
+            if (desc.getLanguage().getName().equals("es")) {
+                descripcionDetallada = descripcionDetallada +
+                        desc.getFlavor_text()
+                                .replaceAll("\\n", "")
+                                .replaceAll("null", "");
+            }
+        }
 
         List<String> tipos = new ArrayList<>();
         assert respuesta != null;
@@ -76,6 +95,7 @@ public class PokemonService {
 
         return PokemonDetalladoDto.builder()
                 .informacionBasica(pokemonInformacionBasicaDto)
+                .descripcion(descripcionDetallada)
                 .listadoDeMovimientos(movimientos)
                 .build();
     }

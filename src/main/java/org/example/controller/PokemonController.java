@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.PokemonDetalladoDto;
 import org.example.dto.PokemonInformacionBasicaDto;
+import org.example.dto.respuestasApi.RespuestaDescripcion;
 import org.example.service.PokemonService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class PokemonController {
     @GetMapping("/{idPokemon}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Pokemon por IdPokemon con información detallada")
-    public ResponseEntity<PokemonDetalladoDto> getAllPokemons(
+    public ResponseEntity<PokemonDetalladoDto> getPokemonById(
             @PathVariable("idPokemon")
             @Parameter(name = "idPokemon", description = "Id del Pokemon", example = "12")
             final Long idPokemon
