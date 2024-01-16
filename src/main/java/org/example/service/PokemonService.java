@@ -72,8 +72,7 @@ public class PokemonService {
             if (desc.getLanguage().getName().equals("es")) {
                 descripcionDetallada = descripcionDetallada +
                         desc.getFlavor_text()
-                                .replaceAll("\\n", "")
-                                .replaceAll("null", "");
+                                .replaceAll("\\n", " ");
             }
         }
 
@@ -93,9 +92,14 @@ public class PokemonService {
                 .listadoDeHabilidades(habilidades)
                 .build();
 
+        assert descripcionDetallada != null;
         return PokemonDetalladoDto.builder()
                 .informacionBasica(pokemonInformacionBasicaDto)
-                .descripcion(descripcionDetallada)
+                .descripcion(descripcionDetallada
+                        .replaceAll("null", "")
+                        .replaceAll("\\. ", "\\.")
+                        .replaceAll("\\.", "\\. ")
+                )
                 .listadoDeMovimientos(movimientos)
                 .build();
     }
